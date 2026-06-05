@@ -1,7 +1,6 @@
 ﻿import React, { useState, useEffect } from "react";
 
-const API = import.meta.env.VITE_API_URL || "https://waygood-backend-assignment-h49x.onrender.com";
-
+const API = "";
 function Login({ onLogin }) {
   const [isRegister, setIsRegister] = useState(false);
   const [form, setForm] = useState({ fullName: "", email: "", password: "" });
