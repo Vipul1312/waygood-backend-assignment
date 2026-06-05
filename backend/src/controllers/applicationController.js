@@ -1,6 +1,9 @@
 ﻿const Application = require("../models/Application");
 const asyncHandler = require("../utils/asyncHandler");
-const HttpError = require("../utils/httpError");
+const {
+  createApplication: createApplicationService,
+  updateApplicationStatus: updateApplicationStatusService,
+} = require("../services/applicationService");
 
 const listApplications = asyncHandler(async (req, res) => {
   const { studentId, status } = req.query;
@@ -28,17 +31,34 @@ const listApplications = asyncHandler(async (req, res) => {
 });
 
 const createApplication = asyncHandler(async (req, res) => {
-  throw new HttpError(
-    501,
-    "Application creation is intentionally incomplete for the assignment."
-  );
+  const { programId, intake, note } = req.body;
+
+  const application = await createApplicationService({
+    studentId: req.user._id,
+    programId,
+    intake,
+    note,
+  });
+
+  res.status(201).json({
+    success: true,
+    data: application,
+  });
 });
 
 const updateApplicationStatus = asyncHandler(async (req, res) => {
-  throw new HttpError(
-    501,
-    "Application status transitions are intentionally incomplete for the assignment."
-  );
+  const { status, note } = req.body;
+
+  const application = await updateApplicationStatusService({
+    applicationId: req.params.id,
+    nextStatus: status,
+    note,
+  });
+
+  res.json({
+    success: true,
+    data: application,
+  });
 });
 
 module.exports = {

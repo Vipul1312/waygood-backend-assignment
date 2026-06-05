@@ -1,10 +1,12 @@
-﻿export default function SignalStrip({ items }) {
+import React from "react";
+
+export default function SignalStrip({ signals }) {
   return (
-    <div className="signal-strip">
-      {items.map((item) => (
-        <div className="signal" key={item.label}>
-          <span>{item.label}</span>
-          <strong>{item.value}</strong>
+    <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+      {signals.map((s) => (
+        <div key={s.label} style={{ background: "#f0f4ff", borderRadius: "8px", padding: "1rem 2rem", minWidth: "150px" }}>
+          <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{s.value}</div>
+          <div style={{ color: "#555" }}>{s.label}</div>
         </div>
       ))}
     </div>

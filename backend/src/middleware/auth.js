@@ -14,21 +14,33 @@ const requireAuth = asyncHandler(async (req, res, next) => {
 
   const token = authorizationHeader.replace("Bearer ", "").trim();
 
+  let decoded;
   try {
-    const decoded = jwt.verify(token, env.jwtSecret);
-    const student = await Student.findById(decoded.sub).select("-password");
-
-    if (!student) {
-      throw new HttpError(401, "Authenticated user no longer exists.");
-    }
-
-    req.user = student;
-    next();
+    decoded = jwt.verify(token, env.jwtSecret);
   } catch (error) {
     throw new HttpError(401, "Invalid or expired token.");
   }
+
+  const student = await Student.findById(decoded.sub).select("-password");
+
+  if (!student) {
+    throw new HttpError(401, "Authenticated user no longer exists.");
+  }
+
+  req.user = student;
+  next();
 });
+
+function requireRole(...roles) {
+  return function roleGuard(req, res, next) {
+    if (!req.user || !roles.includes(req.user.role)) {
+      throw new HttpError(403, "You do not have permission to perform this action.");
+    }
+    next();
+  };
+}
 
 module.exports = {
   requireAuth,
+  requireRole,
 };

@@ -75,15 +75,13 @@ const listUniversities = asyncHandler(async (req, res) => {
 
 const listPopularUniversities = asyncHandler(async (req, res) => {
   const cacheKey = "popular-universities";
-  const cachedPayload = cacheService.get(cacheKey);
+  const cachedPayload = await cacheService.get(cacheKey);
 
   if (cachedPayload) {
     return res.json({
       success: true,
       data: cachedPayload,
-      meta: {
-        cache: "hit",
-      },
+      meta: { cache: "hit" },
     });
   }
 
@@ -92,16 +90,15 @@ const listPopularUniversities = asyncHandler(async (req, res) => {
     .limit(6)
     .lean();
 
-  cacheService.set(cacheKey, universities);
+  await cacheService.set(cacheKey, universities);
 
   res.json({
     success: true,
     data: universities,
-    meta: {
-      cache: "miss",
-    },
+    meta: { cache: "miss" },
   });
 });
+
 
 module.exports = {
   listPopularUniversities,

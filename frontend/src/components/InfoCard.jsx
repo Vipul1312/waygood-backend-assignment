@@ -1,8 +1,10 @@
-﻿export default function InfoCard({ title, body }) {
+import React from "react";
+
+export default function InfoCard({ label, value }) {
   return (
-    <article className="info-card">
-      <h3>{title}</h3>
-      <p>{body}</p>
-    </article>
+    <div style={{ background: "#fff", border: "1px solid #e0e0e0", borderRadius: "8px", padding: "1rem 1.5rem", minWidth: "130px" }}>
+      <div style={{ fontSize: "1.5rem", fontWeight: "bold", textTransform: "capitalize" }}>{value}</div>
+      <div style={{ color: "#888", textTransform: "capitalize" }}>{label}</div>
+    </div>
   );
 }

@@ -1,4 +1,5 @@
-﻿export default function SpotlightList({ items }) {
+import React from "react";
+export default function SpotlightList({ items }) {
   return (
     <div className="spotlight-list">
       {items.map((item) => (
@@ -11,3 +12,4 @@
     </div>
   );
 }
+

@@ -1,23 +1,31 @@
 ﻿const asyncHandler = require("../utils/asyncHandler");
-const HttpError = require("../utils/httpError");
-
-function starterMessage(capability) {
-  return `${capability} is intentionally left incomplete for the candidate assignment.`;
-}
+const { sanitizeStudent } = require("../utils/token");
+const { registerStudent, loginStudent } = require("../services/authService");
 
 const register = asyncHandler(async (req, res) => {
-  throw new HttpError(501, starterMessage("Registration"));
+  const result = await registerStudent(req.body);
+
+  res.status(201).json({
+    success: true,
+    data: result,
+  });
 });
 
 const login = asyncHandler(async (req, res) => {
-  throw new HttpError(501, starterMessage("Login"));
+  const { email, password } = req.body;
+  const result = await loginStudent(email, password);
+
+  res.json({
+    success: true,
+    data: result,
+  });
 });
 
 const me = asyncHandler(async (req, res) => {
-  throw new HttpError(
-    501,
-    starterMessage("Fetching the authenticated user profile")
-  );
+  res.json({
+    success: true,
+    data: sanitizeStudent(req.user),
+  });
 });
 
 module.exports = {

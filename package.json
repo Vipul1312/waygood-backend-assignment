@@ -11,5 +11,21 @@
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
     "seed": "npm --prefix backend run seed"
+  },
+  "dependencies": {
+    "express-rate-limit": "^8.5.2",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.2.0",
+    "ioredis": "^5.11.0",
+    "openai": "^6.41.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 60000
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^11.2.0",
+    "supertest": "^7.2.2"
   }
 }

@@ -1,178 +1,98 @@
-﻿# Waygood Study Abroad Candidate Evaluation Starter
+﻿# Waygood Study Abroad — Backend Submission
 
-This repository is a starter assignment for backend-focused MERN candidates interviewing with Waygood.
+A study-abroad platform backend built on the Waygood candidate starter. Students discover universities and programs, get aggregation-powered recommendations, and manage an application lifecycle. Counselors and students authenticate with JWT.
 
-Waygood's public website positions the business around helping students discover universities, compare options, plan budgets, and navigate their study-abroad journey with AI-assisted tools and partner networks. This starter mirrors that business context by focusing on student discovery, recommendation, and application tracking.
+## Tech Stack
 
-## Business Scenario
+Node.js, Express, MongoDB (Mongoose), JWT auth with bcrypt hashing, Redis (optional, with in-memory fallback), Jest + Supertest for testing, Docker for deployment.
 
-You are joining the engineering team working on a study-abroad platform for students and counselors.
+## Setup
 
-The product already has:
+1. cd backend
+2. npm install
+3. cp .env.example .env
+4. Start MongoDB locally (or use docker compose)
+5. npm run seed
+6. npm run dev
 
-- a basic university and program catalog
-- seeded sample data for students, universities, programs, and applications
-- a minimal React dashboard shell
-- starter backend architecture with Express, Mongoose, controllers, services, and middleware
-
-The product is still missing critical engineering work needed for a real candidate-ready release.
-
-## Your Assignment
-
-Build on top of this starter and complete the platform features below.
-
-### Required Tasks
-
-1. Implement secure authentication
-
-- Complete `POST /api/auth/register`
-- Complete `POST /api/auth/login`
-- Add a protected `GET /api/auth/me`
-- Use JWT-based authentication
-- Store passwords securely using hashing
-- Support roles for `student` and `counselor`
-
-2. Complete advanced university and program discovery
-
-- Extend `GET /api/universities` and `GET /api/programs`
-- Add filtering by country, intake, degree level, budget, scholarship availability, and search term
-- Add pagination metadata and sorting options
-- Make the response format consistent and frontend-friendly
-
-3. Build a recommendation engine using MongoDB aggregation
-
-- Improve `GET /api/recommendations/:studentId`
-- Use MongoDB aggregation to recommend relevant programs for a student
-- Consider preferred countries, budget, field of interest, intake, and IELTS score
-- Return top matches with a short explanation of why each result matched
-
-4. Implement the application workflow
-
-- Complete `POST /api/applications`
-- Complete `PATCH /api/applications/:id/status`
-- Prevent duplicate applications for the same student, program, and intake
-- Enforce valid status transitions
-- Record a timeline/history entry when status changes
-
-5. Add caching and performance improvements
-
-- Cache `GET /api/universities/popular` and/or dashboard summary responses
-- You may use Redis or improve the provided in-memory cache
-- Add or document MongoDB indexes that improve the most important queries
-- Keep performance tradeoffs clear in code comments or README notes
-
-6. Add testing and developer documentation
-
-- Add tests for at least 2 important API flows
-- Include at least 1 edge-case test
-- Update this README with any assumptions, setup steps, and architecture notes needed to review your submission
-
-### Bonus Tasks
-
-- Integrate an AI endpoint for study-plan suggestions, SOP helper prompts, or shortlist summaries
-- Dockerize the backend and database setup
-- Improve the React dashboard to consume your new APIs cleanly
-- Add rate limiting, request logging, or role-based access improvements
-
-## What We Will Evaluate
-
-- Backend architecture and code organization
-- API design, validation, and error handling
-- MongoDB query quality, aggregation usage, and indexing awareness
-- Performance thinking, including caching and response design
-- Code readability, maintainability, and naming
-- Testing depth and practical engineering judgment
-- How well your solution reflects a real study-abroad product workflow
-
-## Suggested Timebox
-
-A strong submission can usually be completed in 6-8 focused hours. We care more about thoughtful engineering tradeoffs than feature volume.
-
-## Suggested Submission Expectations
-
-- Keep the solution realistic and production-minded
-- Favor clean, explainable code over unnecessary complexity
-- If you make assumptions, document them
-- If you skip a bonus feature, that is okay
-- Share your repository, setup instructions, and any sample credentials or environment notes needed to review
-
-## Starter Project Structure
-
-```text
-.
-|-- backend
-|   |-- src
-|   |   |-- config
-|   |   |-- controllers
-|   |   |-- data
-|   |   |-- middleware
-|   |   |-- models
-|   |   |-- routes
-|   |   |-- scripts
-|   |   |-- services
-|   |   `-- utils
-|-- frontend
-|   `-- src
-`-- docs
-```
-
-## Getting Started
-
-### 1. Backend setup
-
-```bash
-cd backend
-npm install
-copy .env.example .env
-npm run seed
-npm run dev
-```
-
-### 2. Frontend setup
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-On macOS or Linux, use `cp .env.example .env` instead of `copy`.
+The API runs on http://localhost:4000.
 
 ## Environment Variables
 
-See `backend/.env.example`.
+- PORT — server port (default 4000)
+- MONGODB_URI — Mongo connection string
+- JWT_SECRET — secret used to sign tokens
+- JWT_EXPIRES_IN — token lifetime (default 1d)
+- CACHE_TTL_SECONDS — cache time to live (default 300)
+- REDIS_URL — optional; if empty the app uses an in-memory cache
+- OPENAI_API_KEY — optional; enables the AI study-plan endpoint
 
-## Seeded Data Included
+## Sample Credentials (after seeding)
 
-The seed script creates sample:
+- aarav@example.com / Candidate123!
+- sara@example.com / Candidate123!
+- counselor@example.com / Candidate123!
 
-- students with profile preferences
-- universities across key study-abroad destinations
-- programs with tuition, intake, and IELTS requirements
-- applications with mixed statuses
+## API Overview
 
-## Sample Seed Credentials
+Auth
+- POST /api/auth/register
+- POST /api/auth/login
+- GET /api/auth/me (protected)
 
-After running the seed script, you can use:
+Discovery
+- GET /api/universities (country, partnerType, q, scholarshipAvailable, sortBy, page, limit)
+- GET /api/universities/popular (cached)
+- GET /api/programs (country, degreeLevel, field, intake, maxTuition, scholarshipAvailable, q, sortBy, page, limit)
 
-- `aarav@example.com` / `Candidate123!`
-- `sara@example.com` / `Candidate123!`
-- `counselor@example.com` / `Candidate123!`
+Recommendations
+- GET /api/recommendations/:studentId (MongoDB aggregation scoring)
+- GET /api/recommendations/:studentId/study-plan (protected, AI/local plan)
 
-## Notes For Candidates
+Applications
+- GET /api/applications (studentId, status filters)
+- POST /api/applications (protected)
+- PATCH /api/applications/:id/status (protected)
 
-- Some routes are intentionally incomplete
-- Some services are intentionally simple and should be improved
-- The codebase is structured to show expected engineering direction, not to be finished
-- You can refactor any part of the starter if your approach is better
+Dashboard
+- GET /api/dashboard (cached aggregation summary)
 
-## Candidate-Friendly Deliverables
+## Response Format
 
-Along with this README, a Word assignment brief is available at:
+Every endpoint returns a consistent envelope: { success, data, meta } on success and { success: false, error: { message, details } } on failure.
 
-- `docs/Waygood_Candidate_Assignment.docx`
+## Recommendation Engine
 
-## Reference Context Used For This Assignment Design
+Scoring runs fully inside a MongoDB aggregation pipeline rather than in JavaScript. Weights: preferred country 35, field alignment 30, within budget 20, preferred intake 10, IELTS requirement met 5. Each result includes a reasons array explaining the match.
 
-- Waygood website: student discovery, AI tools, calculators, and partner-university positioning
-- Job description: backend APIs, MongoDB aggregation, performance optimization, caching, and AI integration
+## Application Lifecycle
+
+Statuses: draft, submitted, under-review, offer-received, visa-processing, enrolled, rejected. Transitions are enforced server-side from config/constants.js. Every status change appends a timeline entry. A unique compound index on (student, program, intake) plus a service-level check prevents duplicate applications.
+
+## Caching and Performance
+
+The cache service uses Redis when REDIS_URL is set and falls back to an in-memory store otherwise. Cached endpoints: /api/universities/popular and /api/dashboard. The dashboard cache is invalidated whenever an application is created or its status changes.
+
+## Indexing Strategy
+
+- University: country, popularScore, and a text index on name/country/city for search.
+- Program: country, field, degreeLevel, tuitionFeeUsd, plus a compound index (country, degreeLevel, field, tuitionFeeUsd) supporting the most common filtered listing.
+- Application: student, program, intake, status, destinationCountry; a unique compound index on (student, program, intake) for duplicate prevention; and (status, createdAt) for filtered listings.
+
+## Security
+
+Passwords hashed with bcrypt. JWT bearer auth. helmet for secure headers. Rate limiting: 300 requests / 15 min globally and 20 / 15 min on auth routes. Request validation via express-validator returns 422 with field-level details.
+
+## Testing
+
+Run npm test. Jest with an in-memory MongoDB covers the auth flow (register, duplicate, login, protected route, wrong password) and the application workflow (creation, duplicate prevention, valid and invalid transitions, and the unsupported-intake edge case).
+
+## Docker
+
+docker compose up --build starts MongoDB, Redis, and the API together.
+
+## Assumptions
+
+- Students and counselors share one Student collection differentiated by role.
+- An application starts in draft; submission is a separate status transition.
+- The AI endpoint degrades to a deterministic local plan when no OpenAI key is configured, so evaluation never depends on external credentials.
